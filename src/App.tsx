@@ -19,21 +19,21 @@ import ConstitutionPage from './pages/ConstitutionPage'
 import SettingsPage from './pages/SettingsPage'
 import ChangePasswordPage from './pages/ChangePasswordPage'
 
+function FullPageLoader() {
+  return (
+    <div className="loading-center" style={{ minHeight: '100vh' }}>
+      <div className="spinner" />
+    </div>
+  )
+}
+
 export default function App() {
   const { loading } = useAuth()
-
-  if (loading) {
-    return (
-      <div className="loading-center" style={{ minHeight: '100vh' }}>
-        <div className="spinner" />
-      </div>
-    )
-  }
 
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/portal" element={<AppLayout />}>
+      <Route path="/portal" element={loading ? <FullPageLoader /> : <AppLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="members" element={<MembersPage />} />
         <Route path="subscriptions" element={<SubscriptionsPage />} />

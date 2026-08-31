@@ -20,6 +20,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let mounted = true
+    const timeout = setTimeout(() => {
+      if (mounted) setLoading(false)
+    }, 6000)
 
     async function init() {
       const { data: sessionData } = await supabase.auth.getSession()
@@ -53,6 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => {
       mounted = false
+      clearTimeout(timeout)
       sub.subscription.unsubscribe()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

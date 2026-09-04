@@ -1,8 +1,5 @@
 import { Link } from 'react-router-dom'
-import {
-  ArrowRight, Users, Wallet, Landmark, TrendingUp, ShieldCheck,
-  CalendarDays, FileText, Mail, BarChart3, CheckCircle2, Quote,
-} from 'lucide-react'
+import { ArrowRight, Users, Wallet, Landmark, TrendingUp, ShieldCheck, CalendarDays, FileText, Mail, ChartBar as BarChart3, CircleCheck as CheckCircle2, Quote } from 'lucide-react'
 
 export default function LandingPage() {
   return (
@@ -15,7 +12,7 @@ export default function LandingPage() {
             <span>ElevateUS</span>
           </div>
           <Link to="/portal" className="btn btn-primary btn-sm landing-cta-nav">
-            Enter Portal <ArrowRight size={16} />
+            Sign In <ArrowRight size={16} />
           </Link>
         </div>
       </nav>
@@ -37,7 +34,7 @@ export default function LandingPage() {
           </p>
           <div className="landing-hero-actions">
             <Link to="/portal" className="btn btn-primary landing-cta-big">
-              Go to Dashboard <ArrowRight size={18} />
+              Sign In to Portal <ArrowRight size={18} />
             </Link>
             <a href="#features" className="btn btn-secondary landing-cta-ghost">
               Explore Features
@@ -117,7 +114,7 @@ export default function LandingPage() {
           <h2>Ready to manage your association?</h2>
           <p>Jump straight into the dashboard and start managing your members, finances, and events.</p>
           <Link to="/portal" className="btn btn-primary landing-cta-big">
-            Enter Dashboard <ArrowRight size={18} />
+            Sign In to Portal <ArrowRight size={18} />
           </Link>
         </div>
       </section>

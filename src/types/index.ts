@@ -1,4 +1,4 @@
-export type UserRole = 'admin' | 'leader' | 'member' | 'treasurer' | 'secretary'
+export type UserRole = 'admin' | 'leader' | 'member' | 'treasurer' | 'secretary' | 'chairperson'
 export type LoanStatus = 'pending' | 'approved' | 'rejected' | 'disbursed' | 'cleared' | 'defaulted'
 export type MemberStatus = 'active' | 'inactive' | 'suspended'
 export type EventType = 'meeting' | 'event' | 'fundraiser' | 'other'

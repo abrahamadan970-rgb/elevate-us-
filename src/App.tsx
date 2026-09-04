@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 import LandingPage from './pages/LandingPage'
+import AuthPage from './pages/AuthPage'
 import AppLayout from './pages/AppLayout'
 import Dashboard from './pages/Dashboard'
 import MembersPage from './pages/MembersPage'
@@ -27,13 +28,18 @@ function FullPageLoader() {
   )
 }
 
-export default function App() {
-  const { loading } = useAuth()
+function ProtectedLayout() {
+  const { profile, loading } = useAuth()
+  if (loading) return <FullPageLoader />
+  if (!profile) return <AuthPage />
+  return <AppLayout />
+}
 
+export default function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/portal" element={loading ? <FullPageLoader /> : <AppLayout />}>
+      <Route path="/portal" element={<ProtectedLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="members" element={<MembersPage />} />
         <Route path="subscriptions" element={<SubscriptionsPage />} />

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
-import { canManageMembers } from '../lib/permissions'
+import { canManageEvents } from '../lib/permissions'
 import { formatDate, todayISO } from '../lib/format'
 import { toast } from '../components/Toast'
 import Modal from '../components/Modal'
@@ -58,7 +58,7 @@ export default function EventsPage() {
   }
 
   if (loading) return <div className="loading-center"><div className="spinner" /></div>
-  const canManage = canManageMembers(profile?.role)
+  const canManage = canManageEvents(profile?.role)
   const upcoming = rows.filter((r) => r.event_date >= todayISO())
   const past = rows.filter((r) => r.event_date < todayISO())
 

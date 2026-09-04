@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
-import { canManageMembers } from '../lib/permissions'
+import { canManageLeaders } from '../lib/permissions'
 import { formatDate, todayISO } from '../lib/format'
 import { toast } from '../components/Toast'
 import Modal from '../components/Modal'
@@ -63,7 +63,7 @@ export default function LeadersPage() {
   }
 
   if (loading) return <div className="loading-center"><div className="spinner" /></div>
-  const canManage = canManageMembers(profile?.role)
+  const canManage = canManageLeaders(profile?.role)
 
   return (
     <div>

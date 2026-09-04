@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import { NavLink, Outlet, Link } from 'react-router-dom'
-import {
-  LayoutDashboard, Users, Wallet, BadgeDollarSign, Landmark, TrendingUp,
-  AlertTriangle, Receipt, CalendarDays, Crown, FileText, Mail, BarChart3,
-  ScrollText, Settings, Menu, X, KeyRound, Home,
-} from 'lucide-react'
+import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom'
+import { LayoutDashboard, Users, Wallet, BadgeDollarSign, Landmark, TrendingUp, TriangleAlert as AlertTriangle, Receipt, CalendarDays, Crown, FileText, Mail, ChartBar as BarChart3, ScrollText, Settings, Menu, X, KeyRound, Chrome as Home, LogOut } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { roleLabel } from '../lib/permissions'
+import type { UserRole } from '../types'
 
-const navSections = [
+const allSections: {
+  title: string
+  items: { to: string; label: string; icon: typeof LayoutDashboard; roles?: UserRole[] }[]
+}[] = [
   {
     title: 'Overview',
     items: [
@@ -26,11 +26,11 @@ const navSections = [
   {
     title: 'Finance',
     items: [
-      { to: '/portal/subscriptions', label: 'Subscriptions', icon: Wallet },
-      { to: '/portal/loans', label: 'Loans', icon: Landmark },
-      { to: '/portal/interest', label: 'Interest', icon: TrendingUp },
-      { to: '/portal/fines', label: 'Fines', icon: AlertTriangle },
-      { to: '/portal/expenses', label: 'Expenses', icon: Receipt },
+      { to: '/portal/subscriptions', label: 'Subscriptions', icon: Wallet, roles: ['admin', 'treasurer', 'chairperson', 'secretary', 'leader'] },
+      { to: '/portal/loans', label: 'Loans', icon: Landmark, roles: ['admin', 'treasurer', 'chairperson', 'secretary', 'leader'] },
+      { to: '/portal/interest', label: 'Interest', icon: TrendingUp, roles: ['admin', 'treasurer'] },
+      { to: '/portal/fines', label: 'Fines', icon: AlertTriangle, roles: ['admin', 'treasurer', 'chairperson', 'secretary', 'leader'] },
+      { to: '/portal/expenses', label: 'Expenses', icon: Receipt, roles: ['admin', 'treasurer'] },
     ],
   },
   {
@@ -38,7 +38,7 @@ const navSections = [
     items: [
       { to: '/portal/events', label: 'Events', icon: CalendarDays },
       { to: '/portal/minutes', label: 'Minutes', icon: FileText },
-      { to: '/portal/email', label: 'Email Center', icon: Mail },
+      { to: '/portal/email', label: 'Email Center', icon: Mail, roles: ['admin', 'treasurer', 'secretary', 'chairperson', 'leader'] },
     ],
   },
   {
@@ -46,16 +46,30 @@ const navSections = [
     items: [
       { to: '/portal/reports', label: 'Reports', icon: BarChart3 },
       { to: '/portal/constitution', label: 'Constitution', icon: ScrollText },
-      { to: '/portal/settings', label: 'Settings', icon: Settings },
+      { to: '/portal/settings', label: 'Settings', icon: Settings, roles: ['admin'] },
     ],
   },
 ]
 
 export default function AppLayout() {
-  const { profile } = useAuth()
+  const { profile, signOut } = useAuth()
+  const navigate = useNavigate()
   const [open, setOpen] = useState(false)
 
   const initials = profile?.full_name?.split(' ').map((s) => s[0]).slice(0, 2).join('') ?? '?'
+  const role = profile?.role
+
+  const sections = allSections
+    .map((section) => ({
+      ...section,
+      items: section.items.filter((item) => !item.roles || (role && item.roles.includes(role))),
+    }))
+    .filter((section) => section.items.length > 0)
+
+  async function handleSignOut() {
+    await signOut()
+    navigate('/')
+  }
 
   return (
     <div className="app-shell">
@@ -68,7 +82,7 @@ export default function AppLayout() {
           </div>
         </div>
         <nav className="nav-scroll">
-          {navSections.map((section) => (
+          {sections.map((section) => (
             <div className="nav-section" key={section.title}>
               <div className="nav-section-title">{section.title}</div>
               {section.items.map((item) => (
@@ -103,6 +117,9 @@ export default function AppLayout() {
             <Link to="/portal/change-password" className="sidebar-footer-link">
               <KeyRound size={15} /> Password
             </Link>
+            <button onClick={handleSignOut} className="sidebar-footer-link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+              <LogOut size={15} /> Sign Out
+            </button>
           </div>
         </div>
       </aside>
@@ -122,6 +139,9 @@ export default function AppLayout() {
           <Link to="/" className="btn btn-secondary btn-sm">
             <Home size={15} /> Home
           </Link>
+          <button onClick={handleSignOut} className="btn btn-secondary btn-sm">
+            <LogOut size={15} /> Sign Out
+          </button>
         </header>
         <main className="content">
           <Outlet />

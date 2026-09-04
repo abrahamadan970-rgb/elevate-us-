@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
-import { canManageSettings } from '../lib/permissions'
+import { canManageConstitution } from '../lib/permissions'
 import { toast } from '../components/Toast'
 import type { Constitution } from '../types'
 
@@ -34,7 +34,7 @@ export default function ConstitutionPage() {
   }
 
   if (loading) return <div className="loading-center"><div className="spinner" /></div>
-  const canManage = canManageSettings(profile?.role)
+  const canManage = canManageConstitution(profile?.role)
 
   const fields = [
     { key: 'name', label: 'Association Name' },

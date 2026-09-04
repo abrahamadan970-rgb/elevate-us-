@@ -25,13 +25,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, 6000)
 
     async function init() {
-      const { data: sessionData } = await supabase.auth.getSession()
-      if (!mounted) return
-      if (sessionData.session?.user) {
-        await loadProfile(sessionData.session.user.id)
-        return
+      try {
+        const { data: sessionData } = await supabase.auth.getSession()
+        if (!mounted) return
+        if (sessionData.session?.user) {
+          await loadProfile(sessionData.session.user.id)
+          return
+        }
+        setLoading(false)
+      } catch (err) {
+        console.error('Auth init error:', err)
+        setLoading(false)
       }
-      setLoading(false)
     }
 
     init()
@@ -54,14 +59,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   async function loadProfile(userId: string) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle()
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle()
 
-    if (error) console.error('Profile load error:', error)
-    setProfile(data as Profile | null)
+      if (error) console.error('Profile load error:', error)
+      setProfile(data as Profile | null)
+    } catch (err) {
+      console.error('Profile load exception:', err)
+    }
     setLoading(false)
   }
 

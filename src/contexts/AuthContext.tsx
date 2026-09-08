@@ -93,8 +93,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         },
       },
     })
-    if (error) return { error: error.message }
-    if (!data.user) return { error: 'This email is already registered. Please sign in instead.' }
+    if (error) {
+      const message = error.message === '{}' ? 'This email is already registered. Please sign in instead.' : error.message
+      return { error: message }
+    }
+    if (!data.user || data.user.identities?.length === 0) {
+      return { error: 'This email is already registered. Please sign in instead.' }
+    }
     return { error: null }
   }
 

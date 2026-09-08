@@ -7,7 +7,7 @@ import type { UserRole } from '../types'
 
 const allSections: {
   title: string
-  items: { to: string; label: string; icon: typeof LayoutDashboard; roles?: UserRole[] }[]
+  items: { to: string; label: string; icon: typeof LayoutDashboard }[]
 }[] = [
   {
     title: 'Overview',
@@ -26,11 +26,11 @@ const allSections: {
   {
     title: 'Finance',
     items: [
-      { to: '/portal/subscriptions', label: 'Subscriptions', icon: Wallet, roles: ['admin', 'treasurer', 'chairperson', 'secretary', 'leader'] },
-      { to: '/portal/loans', label: 'Loans', icon: Landmark, roles: ['admin', 'treasurer', 'chairperson', 'secretary', 'leader'] },
-      { to: '/portal/interest', label: 'Interest', icon: TrendingUp, roles: ['admin', 'treasurer'] },
-      { to: '/portal/fines', label: 'Fines', icon: AlertTriangle, roles: ['admin', 'treasurer', 'chairperson', 'secretary', 'leader'] },
-      { to: '/portal/expenses', label: 'Expenses', icon: Receipt, roles: ['admin', 'treasurer'] },
+      { to: '/portal/subscriptions', label: 'Subscriptions', icon: Wallet },
+      { to: '/portal/loans', label: 'Loans', icon: Landmark },
+      { to: '/portal/interest', label: 'Interest', icon: TrendingUp },
+      { to: '/portal/fines', label: 'Fines', icon: AlertTriangle },
+      { to: '/portal/expenses', label: 'Expenses', icon: Receipt },
     ],
   },
   {
@@ -38,7 +38,7 @@ const allSections: {
     items: [
       { to: '/portal/events', label: 'Events', icon: CalendarDays },
       { to: '/portal/minutes', label: 'Minutes', icon: FileText },
-      { to: '/portal/email', label: 'Email Center', icon: Mail, roles: ['admin', 'treasurer', 'secretary', 'chairperson', 'leader'] },
+      { to: '/portal/email', label: 'Email Center', icon: Mail },
     ],
   },
   {
@@ -46,7 +46,7 @@ const allSections: {
     items: [
       { to: '/portal/reports', label: 'Reports', icon: BarChart3 },
       { to: '/portal/constitution', label: 'Constitution', icon: ScrollText },
-      { to: '/portal/settings', label: 'Settings', icon: Settings, roles: ['admin'] },
+      { to: '/portal/settings', label: 'Settings', icon: Settings },
     ],
   },
 ]
@@ -60,11 +60,6 @@ export default function AppLayout() {
   const role = profile?.role
 
   const sections = allSections
-    .map((section) => ({
-      ...section,
-      items: section.items.filter((item) => !item.roles || (role && item.roles.includes(role))),
-    }))
-    .filter((section) => section.items.length > 0)
 
   async function handleSignOut() {
     await signOut()

@@ -7,7 +7,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const DEFAULT_PASSWORD = "ElevateUS";
+const DEFAULT_PASSWORD = "ElevateUS2026!";
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -52,11 +52,15 @@ Deno.serve(async (req: Request) => {
       const role = member.status === "left" ? "member" : "member";
 
       if (existingEmails.has(email)) {
-        // Already has account — just ensure must_change_password is set
+        // Already has account — reset password and ensure must_change_password is set
+        await supabaseAdmin.auth.admin.updateUserById(
+          existingUsers?.users?.find((u: { email: string }) => (u.email ?? "").toLowerCase() === email)?.id ?? "",
+          { password: DEFAULT_PASSWORD },
+        );
         await supabaseAdmin.from("profiles")
           .update({ must_change_password: true, full_name: fullName })
           .eq("email", email);
-        results.push({ email, full_name: fullName, status: "exists", created: false, emailed: false });
+        results.push({ email, full_name: fullName, status: "reset", created: false, emailed: false });
         continue;
       }
 

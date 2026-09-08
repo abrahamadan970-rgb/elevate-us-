@@ -29,10 +29,12 @@ export default function ReportsPage() {
       supabase.from('membership_fees').select('amount'),
       supabase.from('expenses').select('amount, expense_date'),
       supabase.from('loans').select('principal_amount, balance, status'),
-      supabase.from('members').select('id').eq('status', 'left'),
+      supabase.from('members').select('id, status, leave_date'),
     ])
 
-    const leftIds = new Set((leftMembers.data ?? []).map((m: any) => m.id))
+    const leftIds = new Set((leftMembers.data ?? [])
+      .filter((m: any) => m.status === 'inactive' || m.status === 'left' || m.leave_date)
+      .map((m: any) => m.id))
     const yearSubs = (subs.data ?? []).filter((r) => year === 'all' || r.payment_year === year)
     const activeSubs = yearSubs.filter((r) => !leftIds.has(r.member_id))
     const withdrawnSubs = yearSubs.filter((r) => leftIds.has(r.member_id))

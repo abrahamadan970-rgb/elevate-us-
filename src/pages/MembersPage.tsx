@@ -15,7 +15,7 @@ export default function MembersPage() {
   const [showAdd, setShowAdd] = useState(false)
   const [editing, setEditing] = useState<Member | null>(null)
   const [creatingAccountFor, setCreatingAccountFor] = useState<Member | null>(null)
-  const [accountPassword, setAccountPassword] = useState('ElevateUS2024!')
+  const [accountPassword, setAccountPassword] = useState('ElevateUS2026!')
   const [accountRole, setAccountRole] = useState<UserRole>('member')
   const [accountBusy, setAccountBusy] = useState(false)
   const [sendingEmails, setSendingEmails] = useState(false)
@@ -175,7 +175,7 @@ export default function MembersPage() {
                     {m.user_id ? (
                       <span className="badge badge-success">Linked</span>
                     ) : canManage && m.email ? (
-                      <button className="btn btn-secondary btn-sm" onClick={() => { setCreatingAccountFor(m); setAccountPassword('ElevateUS2024!'); setAccountRole('member') }}>
+                      <button className="btn btn-secondary btn-sm" onClick={() => { setCreatingAccountFor(m); setAccountPassword('ElevateUS2026!'); setAccountRole('member') }}>
                         <UserPlus size={13} /> Create
                       </button>
                     ) : '—'}

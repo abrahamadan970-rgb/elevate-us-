@@ -1,0 +1,11 @@
+[functions.create-all-accounts]
+verify_jwt = true
+
+[functions.create-member-account]
+verify_jwt = true
+
+[functions.send-credentials]
+verify_jwt = true
+
+[functions.send-email]
+verify_jwt = true

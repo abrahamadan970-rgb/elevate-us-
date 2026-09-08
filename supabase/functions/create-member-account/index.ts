@@ -38,7 +38,7 @@ Deno.serve(async (req: Request) => {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    const password = default_password || "ElevateUS2024!";
+    const password = default_password || "ElevateUS2026!";
 
     // Check if a profile already exists for this email
     const { data: existingProfile } = await supabaseAdmin

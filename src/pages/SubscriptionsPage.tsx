@@ -36,8 +36,8 @@ export default function SubscriptionsPage() {
       supabase.from('members').select('*').eq('status', 'active').order('full_name'),
     ])
     const all = allSubs.data ?? []
-    const leftSubs = all.filter((r) => r.member?.status === 'left')
-    const activeSubs = all.filter((r) => r.member?.status !== 'left')
+    const leftSubs = all.filter((r) => r.member?.status === 'left' || r.member?.status === 'inactive' || r.member?.leave_date)
+    const activeSubs = all.filter((r) => r.member?.status !== 'left' && r.member?.status !== 'inactive' && !r.member?.leave_date)
     setAllTimeRecords(activeSubs.length)
     setWithdrawnTotal(leftSubs.reduce((s, r) => s + Number(r.amount), 0))
     setGrandTotal(activeSubs.reduce((s, r) => s + Number(r.amount), 0))

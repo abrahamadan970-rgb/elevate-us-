@@ -6,7 +6,7 @@ import { roleLabel } from '../lib/permissions'
 import type { UserRole } from '../types'
 
 const SIGNUP_ROLES: { value: UserRole; desc: string }[] = [
-  { value: 'member', desc: 'View-only access' },
+  { value: 'member', desc: 'View all pages, edit your own data' },
   { value: 'treasurer', desc: 'Manage finances' },
   { value: 'secretary', desc: 'Manage minutes & members' },
   { value: 'chairperson', desc: 'Oversee & approve' },
@@ -155,6 +155,9 @@ export default function AuthPage() {
           {mode === 'login'
             ? "Don't have an account? Click Create Account above to register."
             : 'Already registered? Click Sign In above to log in.'}
+        </div>
+        <div className="auth-hint" style={{ marginTop: 8, fontSize: 12 }}>
+          Default password for accounts created by an administrator: <strong>ElevateUS2026!</strong> — you'll be asked to change it on first login.
         </div>
 
         <div style={{ textAlign: 'center', marginTop: '16px' }}>

@@ -57,7 +57,7 @@ Deno.serve(async (req: Request) => {
             <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin: 20px 0;">
               <table style="width: 100%; font-size: 15px;">
                 <tr><td style="color: #64748b; padding: 6px 0;">Email:</td><td style="color: #1e293b; font-weight: 600; padding: 6px 0;">${email}</td></tr>
-                <tr><td style="color: #64748b; padding: 6px 0;">Password:</td><td style="color: #1e293b; font-weight: 600; padding: 6px 0;">ElevateUS</td></tr>
+                <tr><td style="color: #64748b; padding: 6px 0;">Password:</td><td style="color: #1e293b; font-weight: 600; padding: 6px 0;">ElevateUS2026!</td></tr>
               </table>
             </div>
             <div style="background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px; padding: 16px; margin: 16px 0;">

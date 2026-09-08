@@ -37,10 +37,12 @@ export default function Dashboard() {
         supabase.from('loans').select('id,status,balance,principal_amount'),
         supabase.from('members').select('id,is_defaulter,status').eq('status', 'active'),
         supabase.from('events').select('id,event_date').gte('event_date', new Date().toISOString().split('T')[0]),
-        supabase.from('members').select('id').eq('status', 'left'),
+        supabase.from('members').select('id, status, leave_date'),
       ])
 
-      const leftIds = new Set((leftMembers.data ?? []).map((m) => m.id))
+      const leftIds = new Set((leftMembers.data ?? [])
+        .filter((m) => m.status === 'inactive' || m.status === 'left' || m.leave_date)
+        .map((m) => m.id))
       const activeSubs = (subs.data ?? []).filter((r) => !leftIds.has(r.member_id))
       const totalSubscriptions = activeSubs.reduce((s, r) => s + Number(r.amount), 0)
       const totalInterest = interest.data?.reduce((s, r) => s + Number(r.amount), 0) ?? 0

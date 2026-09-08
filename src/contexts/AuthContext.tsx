@@ -42,12 +42,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     init()
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        loadProfile(session.user.id)
-      } else {
-        setProfile(null)
-        setLoading(false)
-      }
+      (async () => {
+        if (session?.user) {
+          await loadProfile(session.user.id)
+        } else {
+          setProfile(null)
+          setLoading(false)
+        }
+      })()
     })
 
     return () => {
@@ -81,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signUp(email: string, password: string, fullName: string, role: UserRole): Promise<{ error: string | null }> {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -92,6 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     })
     if (error) return { error: error.message }
+    if (!data.user) return { error: 'This email is already registered. Please sign in instead.' }
     return { error: null }
   }
 

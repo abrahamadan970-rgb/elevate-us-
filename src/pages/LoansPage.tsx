@@ -64,6 +64,7 @@ export default function LoansPage() {
 
   async function save() {
     if (!form.member_id || !form.principal_amount) { toast('Member and principal required', 'error'); return }
+    if (!form.due_date) { toast('Due date is required', 'error'); return }
     const principal = Number(form.principal_amount)
     const rate = Number(form.interest_rate)
     const mpesa = Number(form.mpesa_cost)
@@ -164,10 +165,14 @@ export default function LoansPage() {
     const rate = Number(loan.interest_rate)
     const newInterest = remaining * (rate / 100)
     const newTotal = remaining + newInterest
+    const oldDue = loan.due_date ? new Date(loan.due_date) : new Date()
+    const newDue = new Date(oldDue)
+    newDue.setMonth(newDue.getMonth() + 1)
     const { error } = await supabase.from('loans').insert({
       member_id: loan.member_id, principal_amount: remaining, interest_rate: rate,
       interest_amount: newInterest, mpesa_cost: 0, total_payable: newTotal, balance: newTotal,
-      issue_date: todayISO(), due_date: '', notes: `Carried forward from loan ${loan.id.slice(0, 8)}`,
+      issue_date: todayISO(), due_date: newDue.toISOString().slice(0, 10),
+      notes: `Carried forward from loan ${loan.id.slice(0, 8)}`,
       approved_by: profile?.id, status: 'approved' as LoanStatus,
       is_carried_forward: true, original_loan_id: loan.id,
     })

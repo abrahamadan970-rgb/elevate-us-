@@ -159,27 +159,64 @@ export default function LoansPage() {
   }
 
   async function carryForward(loan: Loan) {
-    if (!confirm('Carry forward this loan? A new loan will be created for the remaining balance and this one marked cleared.')) return
-    const remaining = Number(loan.balance)
-    if (remaining <= 0) { toast('Loan has no balance to carry forward', 'error'); return }
+    const principal = Number(loan.principal_amount)
+    const interestAmount = Number(loan.interest_amount)
+    const mpesaCost = Number(loan.mpesa_cost ?? 0)
+    const feesPaid = interestAmount + mpesaCost
+    const amountRepaid = Number(loan.amount_repaid)
+
+    if (amountRepaid < feesPaid) {
+      toast(
+        `Interest and transaction cost (KES ${feesPaid.toLocaleString()}) must be paid before carrying forward. Currently repaid: KES ${amountRepaid.toLocaleString()}.`,
+        'error'
+      )
+      return
+    }
+
+    const carryPrincipal = principal
+    if (carryPrincipal <= 0) { toast('Loan has no principal to carry forward', 'error'); return }
+
+    if (!confirm(
+      `Carry forward this loan?\n\n` +
+      `Interest + transaction cost (KES ${feesPaid.toLocaleString()}) has been paid.\n` +
+      `A new loan will be created for the principal of KES ${carryPrincipal.toLocaleString()} ` +
+      `with ${Number(loan.interest_rate)}% interest auto-calculated.\n` +
+      `This loan will be marked cleared.`
+    )) return
+
     const rate = Number(loan.interest_rate)
-    const newInterest = remaining * (rate / 100)
-    const newTotal = remaining + newInterest
+    const newInterest = carryPrincipal * (rate / 100)
+    const newMpesa = 0
+    const newTotal = carryPrincipal + newInterest + newMpesa
     const oldDue = loan.due_date ? new Date(loan.due_date) : new Date()
     const newDue = new Date(oldDue)
     newDue.setMonth(newDue.getMonth() + 1)
+
     const { error } = await supabase.from('loans').insert({
-      member_id: loan.member_id, principal_amount: remaining, interest_rate: rate,
-      interest_amount: newInterest, mpesa_cost: 0, total_payable: newTotal, balance: newTotal,
-      issue_date: todayISO(), due_date: newDue.toISOString().slice(0, 10),
+      member_id: loan.member_id,
+      principal_amount: carryPrincipal,
+      interest_rate: rate,
+      interest_amount: newInterest,
+      mpesa_cost: newMpesa,
+      total_payable: newTotal,
+      balance: newTotal,
+      issue_date: todayISO(),
+      due_date: newDue.toISOString().slice(0, 10),
       notes: `Carried forward from loan ${loan.id.slice(0, 8)}`,
-      approved_by: profile?.id, status: 'approved' as LoanStatus,
-      is_carried_forward: true, original_loan_id: loan.id,
+      approved_by: profile?.id,
+      status: 'approved' as LoanStatus,
+      is_carried_forward: true,
+      original_loan_id: loan.id,
     })
     if (error) { toast(error.message, 'error'); return }
-    await supabase.from('loans').update({ status: 'cleared' as LoanStatus, balance: 0, amount_repaid: Number(loan.total_payable) }).eq('id', loan.id)
+
+    await supabase.from('loans').update({
+      status: 'cleared' as LoanStatus,
+      balance: 0,
+      amount_repaid: Number(loan.total_payable),
+    }).eq('id', loan.id)
     await checkAndClearDefaulter(loan.member_id)
-    toast('Loan carried forward'); load()
+    toast('Loan carried forward — new loan created with fresh interest'); load()
   }
 
   async function deleteRepayment(rep: LoanRepayment) {

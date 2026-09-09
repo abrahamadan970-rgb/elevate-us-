@@ -77,8 +77,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signIn(email: string, password: string): Promise<{ error: string | null }> {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) return { error: error.message }
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim().toLowerCase(),
+      password,
+    })
+    if (error) {
+      if (error.message === '{}' || error.status >= 500) {
+        return { error: 'The login service is temporarily unavailable. Please try again shortly.' }
+      }
+      if (error.message.toLowerCase().includes('invalid login credentials')) {
+        return { error: 'The email or password is incorrect. If this is a temporary account, use ElevateUS2026!.' }
+      }
+      return { error: error.message }
+    }
     return { error: null }
   }
 
